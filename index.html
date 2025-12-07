@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>CDL Orientation & Safety Quiz</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #e67e22; /* Safety Orange */
+            --bg: #fdfdfd;
+            --text: #333;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #ecf0f1;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: white;
+            width: 100%;
+            max-width: 650px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .header h1 {
+            color: var(--primary);
+            margin: 0;
+            font-size: 24px;
+            text-align: center;
+        }
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            color: #7f8c8d;
+            font-weight: 600;
+        }
+        .score-display {
+            color: var(--primary);
+        }
+        .score-display.danger {
+            color: #e74c3c;
+        }
+        .progress-container {
+            background-color: #eee;
+            border-radius: 5px;
+            height: 10px;
+            width: 100%;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            background-color: var(--accent);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .warning-banner {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none; /* Hidden by default */
+            text-align: center;
+            font-weight: bold;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .question {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .chapter-tag {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .btn-opt {
+            padding: 15px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            outline: none;
+        }
+        .btn-opt:hover:not(:disabled) {
+            background-color: #f9f9f9;
+            border-color: #bbb;
+        }
+        .btn-opt:disabled {
+            cursor: default;
+            opacity: 0.7;
+        }
+        .btn-opt.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            opacity: 1;
+        }
+        .btn-opt.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+            opacity: 1;
+        }
+        .btn-opt:focus {
+            box-shadow: 0 0 0 3px rgba(38, 143, 255, 0.15);
+            border-color: #268fff;
+        }
+        .controls {
+            margin-top: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn-nav {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-nav:hover {
+            background-color: #34495e;
+        }
+        .btn-nav:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background-color: #7f8c8d;
+            margin-top: 10px;
+        }
+        .btn-secondary:hover {
+            background-color: #636e72;
+        }
+        .results {
+            text-align: center;
+            display: none;
+        }
+        .score-big {
+            font-size: 48px;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+        .menu-view {
+            text-align: center;
+            display: none;
+        }
+        .menu-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            background-color: var(--primary);
+        }
+        .menu-btn.resume {
+            background-color: var(--accent);
+        }
+        .btn-review {
+            background-color: #e74c3c;
+            display: inline-block; 
+            margin-left: 10px;
+        }
+        .btn-review:hover {
+            background-color: #c0392b;
+        }
+        .meta-row {
+            display:flex;
+            gap:10px;
+            justify-content: center;
+            margin-top: 8px;
+        }
+        .small {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- Menu View -->
+    <div id="menu-view" class="menu-view" aria-live="polite">
+        <div class="header">
+            <h1>CDL Training Portal</h1>
+            <div style="color:#7f8c8d; margin-top:5px;">Select an option to begin</div>
+        </div>
+        <button id="btn-resume" class="menu-btn resume" onclick="resumeQuiz()">Resume Saved Progress</button>
+        <button id="btn-new" class="menu-btn" onclick="startNewQuiz('full')">Start New Quiz</button>
+        <div class="meta-row">
+            <button id="btn-clear" class="btn-nav btn-secondary" onclick="clearSavedProgress()">Clear Saved Progress</button>
+            <div class="small">Progress is saved in your browser (localStorage)</div>
+        </div>
+    </div>
+
+    <!-- Quiz View -->
+    <div id="quiz-view" style="display:none;">
+        <div class="header">
+            <h1>CDL Orientation & Safety</h1>
+            <div class="header-info">
+                <span id="q-counter">Question 1</span>
+                <span id="live-score" class="score-display" aria-live="polite">Score: —</span>
+            </div>
+        </div>
+        
+        <div class="progress-container" aria-hidden="false" aria-label="Progress">
+            <div class="progress-bar" id="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+        </div>
+
+        <!-- Warning Banner -->
+        <div id="score-warning" class="warning-banner" role="alert" aria-live="assertive">
+            ⚠️ Warning: Your running score is below 80%
+        </div>
+
+        <div id="quiz-content">
+            <span class="chapter-tag" id="chapter-tag">Chapter 1</span>
+            <div class="question" id="question-text">Loading...</div>
+            <div class="options" id="options-container"></div>
+        </div>
+
+        <div class="controls">
+            <button class="btn-nav btn-secondary" id="btn-prev" onclick="prevQuestion()">Previous</button>
+            <button class="btn-nav" id="btn-next" onclick="nextQuestion()">Next Question</button>
+        </div>
+    </div>
+
+    <!-- Results View -->
+    <div id="results-view" class="results" aria-live="polite">
+        <div class="header">
+            <h1>Quiz Completed</h1>
+        </div>
+        <div class="score-big" id="final-score">0%</div>
+        <p id="result-msg">You have finished the practice exam.</p>
+        <div style="margin-top: 20px;">
+            <button class="btn-nav" onclick="startNewQuiz('full')">Restart Full Quiz</button>
+            <button class="btn-nav btn-review" id="btn-review-wrong" style="display:none;" onclick="startReviewQuiz()">Review Missed Questions</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Full Question Bank (minor typo fixes in some text)
+    const questions = [
+        // CHAPTER 1
+        {
+            chapter: "Chapter 1: Orientation",
+            question: "The trucking industry is subject to regulations from which of the following agencies?",
+            options: ["U.S. Department of Interior (DOI)", "Bureau of Safety and Environmental Enforcement (BSEE)", "Federal Motor Carrier Safety Administration (FMCSA)", "Bureau of Transportation Statistics (BTS)"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 1: Orientation",
+            question: "The Federal Motor Carrier Safety Regulations (FMCSRs) establish basic safety rules and standards for:",
+            options: ["Drivers and other employees of motor carriers", "Motor carriers", "Commercial motor vehicles (CMVs)", "All of the above"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 1: Orientation",
+            question: "In order to obtain your commercial driver's license (CDL), you must first:",
+            options: ["Obtain a commercial learner's permit (CLP)", "Have all restrictions removed from your personal driver's license", "Be at least 15-years old", "Both A and C"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 1: Orientation",
+            question: "Which of the following requires an endorsement on your CDL?",
+            options: ["Air brakes", "Double/triple trailers", "Manual transmission", "All of the above"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 1: Orientation",
+            question: "According to the FMCSRs, you are qualified to operate a CMV if you:",
+            options: ["Are at least 15-years old", "Have passed an IQ test", "Have only one current CDL", "Are currently disqualified from operating a motor vehicle"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 1: Orientation",
+            question: "Which of the following is considered a major disqualifying offense?",
+            options: ["Following the vehicle ahead too closely", "Leaving the scene of an accident", "Texting while driving a CMV", "Violating an out-of-service order"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter 1: Orientation",
+            question: "Prohibited alcohol use includes which of the following?",
+            options: ["Use during the eight hours following an accident, or until you undergo a test", "Reporting for duty with an alcohol concentration of 0.01 or greater", "Use during the eight hours before performing safety-sensitive functions", "Use while cleaning your windows and mirrors"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter 1: Orientation",
+            question: "Which of the following will result in you being removed from all safety-sensitive functions until you go through a return-to-duty process?",
+            options: ["Failing an alcohol test", "Testing positive for drugs", "Refusing to take a required alcohol and/or drug test", "All of the above"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 1: Orientation",
+            question: "What part of a combination vehicle is referred to as the 'power unit'?",
+            options: ["Tractor", "Drive axle", "Duals", "Either A or B"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter 1: Orientation",
+            question: "The federal size and weight limits apply to a national system of interstates commonly referred to as the:",
+            options: ["Federal Network", "Limit Highway", "Weight Road", "National Network"],
+            answer: 3
+        },
+        
+        // CHAPTER 2
+        {
+            chapter: "Chapter 2: Controls",
+            question: "A commercial motor vehicle's (CMV's) engine controls are used to:",
+            options: ["Safely operate your vehicle", "Start up and shut down the vehicle's engine", "Warn you when pressures or temperatures reach a dangerous level", "Help you steer, accelerate, brake, and park your CMV"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter 2: Controls",
+            question: "If your truck has a ______, you must first turn the key to the 'on' position before engaging it.",
+            options: ["Starter button", "Engine brake", "Clutch button", "Cruise control"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter 2: Controls",
+            question: "Which clutch position is required to start the engine or shift gears?",
+            options: ["Engaged", "Free play", "Disengaged", "Clutch brake"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 2: Controls",
+            question: "Which of the following is a yellow, diamond-shaped knob that allows you to activate the parking brake?",
+            options: ["Parking brake control valve", "Trailer air supply valve", "Foot brake control valve", "Trailer brake hand-control valve"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter 2: Controls",
+            question: "Secondary vehicle controls:",
+            options: ["Provide backup functionality to the primary controls", "Shut down the vehicle's engine in an emergency", "Assist you in safely operating your vehicle", "All of the above"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 2: Controls",
+            question: "If your CMV has a ______, the Federal Motor Carrier Safety Regulations require you must use it.",
+            options: ["Seat heater", "Cruise control", "Seat belt", "Fog lamps"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 2: Controls",
+            question: "Which vehicle instrument measures the voltage in a vehicle's electrical system?",
+            options: ["Voltmeter", "Exhaust pyrometer", "Ammeter", "Both A and C (Voltmeter/Ammeter both measure electricity)"],
+            answer: 0 
+        },
+        {
+            chapter: "Chapter 2: Controls",
+            question: "What is a normal operating range for a CMV's oil pressure gauge?",
+            options: ["20-45 psi", "30-50 psi", "40-65 psi", "50-70 psi"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter 2: Controls",
+            question: "Which of the following warning devices help you to know when exhaust temperatures are abnormal?",
+            options: ["Pyrometer warning light", "Coolant temperature warning light", "Differential warning light", "Both A and B"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter 2: Controls",
+            question: "Which of the following warning devices indicates there is inadequate pressure in the air brake system?",
+            options: ["Coolant level alarm", "Oil level alarm", "Low pressure warning alarm/light", "Oil pressure warning light"],
+            answer: 2
+        },
+
+        // CHAPTER 3
+        {
+            chapter: "Chapter 3: Inspections",
+            question: "In order to put a commercial motor vehicle on the road, you must first:",
+            options: ["Complete and sign a DVIR", "Ask a mechanic about the vehicle's condition", "Conduct a thorough pre-trip inspection", "Perform a short test drive"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 3: Inspections",
+            question: "Before you inspect the engine compartment and front axle components, you should:",
+            options: ["Verify the parking brakes have been set", "Put the keys in ignition and start engine", "Remove chocks", "Close the hood"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter 3: Inspections",
+            question: "What is the minimum tread depth for the steer-tire?",
+            options: ["2/32 inch", "4/32 inch", "6/32 inch", "8/32 inch"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter 3: Inspections",
+            question: "When inspecting the brake assembly, you should ensure:",
+            options: ["The slack adjusters are snug and tight", "The brake shoes have at least a quarter-inch lining", "Air brake lines have no more than four cracks", "All of the above"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter: 3: Inspections",
+            question: "After the initial 50-mile check, how often must you conduct additional inspections of cargo securement?",
+            options: ["Change of duty status, every 3 hours, or 150 miles (whichever comes first)", "Whenever you stop for fuel or every 150 miles", "If you are stopped for roadside inspection", "Both A and C"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter 3: Inspections",
+            question: "What is the only circumstance you are not required to inspect your cargo and load securing devices?",
+            options: ["If it is sealed and you have not been ordered to open it", "If your vehicle is loaded in a way to make inspection impossible", "If destination is less than 100 miles", "Both A and B"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 3: Inspections",
+            question: "When is it appropriate to conduct a post-trip inspection?",
+            options: ["Whenever convenient", "The same exact time every evening", "At the end of every work day", "Right before midnight"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 3: Inspections",
+            question: "What items should a post-trip inspection include?",
+            options: ["Brakes, steering, and lighting", "Oil and tire pressure", "The same items as the pre-trip inspection except for things affected by heat", "Only items known to be defective"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 3: Inspections",
+            question: "When do the regulations require drivers of property-carrying CMVs to complete and sign a DVIR?",
+            options: ["At the start of their work day", "Whenever a defect or deficiency is discovered or reported", "Every 150 miles", "At the end of their work day for any vehicle used"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter 3: Inspections",
+            question: "If the previous driver found defects and noted them on a DVIR, what must you do before operating that vehicle again?",
+            options: ["Ensure items listed were repaired/certified safe", "Original copy must be received at terminal", "Master Technician must certify", "All of the above"],
+            answer: 0
+        },
+
+        // CHAPTER 4
+        {
+            chapter: "Chapter 4: Basic Control",
+            question: "What is the very first step you should take when starting a tractor-trailer engine?",
+            options: ["Depress the clutch", "Apply the parking brake", "Turn the ignition switch on", "Apply the service brakes"],
+            answer: 1 
+        },
+        {
+            chapter: "Chapter 4: Basic Control",
+            question: "What is the appropriate cool down period for a tractor-trailer engine?",
+            options: ["Not necessary", "30-60 minutes", "Depends on weather", "It varies based on engine type, trip nature, and cargo hauled"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 4: Basic Control",
+            question: "When setting your tractor-trailer in motion, how can you tell the friction point of your clutch has been reached?",
+            options: ["RPMs decrease", "RPMs increase", "RPMs remain same for 5 seconds", "None of the above"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter 4: Basic Control",
+            question: "After stopping your tractor-trailer, you should:",
+            options: ["Pump brakes to charge air", "Engage emergency/parking brake", "Maintain brake pressure to keep vehicle stationary", "Both B and C"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 4: Basic Control",
+            question: "When testing your tractor-trailer hook-up (Tug Test), pull gently and stop when:",
+            options: ["You reach 100-300 RPMs", "Tractor does not move for 5 seconds", "Trailer brake button pops out", "You feel the engine start to drag down"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 4: Basic Control",
+            question: "What is off-tracking?",
+            options: ["Amplification of side-to-side movement", "When rear wheels follow a different path than front wheels", "When rear wheels lock up", "When wheels lose traction"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter 4: Basic Control",
+            question: "What is essential when making a left turn in an intersection with multiple lanes?",
+            options: ["Signal 50 feet in advance", "Speed up", "Start in rightmost lane", "Begin turning as soon as your cab passes the crosswalk (center of intersection)"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 4: Basic Control",
+            question: "What factors determine time needed to merge with traffic on an interstate?",
+            options: ["Length of on-ramp", "Weight of load", "Degree of turn", "All of the above"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 4: Basic Control",
+            question: "What should you do if you are unsure what may be behind your vehicle while backing? (GOAL)",
+            options: ["Stop, get out, and check", "Check mirrors and back quickly", "Stick head out window", "All of the above"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter 4: Basic Control",
+            question: "What should you do if you cannot easily correct trailer drift when backing?",
+            options: ["Find someone to back for you", "Get a spotter", "Pull up, reposition, and start over", "Turn tractor around"],
+            answer: 2
+        },
+
+        // CHAPTER 5
+        {
+            chapter: "Chapter 5: Shifting",
+            question: "In a manual transmission, the ________ controls what gear the transmission is in.",
+            options: ["Clutch", "Accelerator", "Shift lever", "Brake pedal"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 5: Shifting",
+            question: "When your vehicle reaches the maximum speed for a gear, you must:",
+            options: ["Upshift", "Downshift", "Pump brakes", "Push accelerator"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter 5: Shifting",
+            question: "When double clutching is done correctly, and the RPMs are matched during the shift:",
+            options: ["It gives you time to think", "Enables rhythm", "Wait for 500 RPM change", "The gears do not grind"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 5: Shifting",
+            question: "Downshifting early is a common error that may:",
+            options: ["Make it impossible to get into the next lower gear", "Cause clutch burn out", "Allow engine to rev low", "Make clutch pop out"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter 5: Shifting",
+            question: "The purpose of upshifting is to:",
+            options: ["Match road speed with engine power", "Allow vehicle to increase speed", "Slow down", "Transfer power"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter 5: Shifting",
+            question: "Proper, smooth shifting is important because if you shift before your vehicle is ready:",
+            options: ["Vehicle may jerk", "Drive wheels lock up", "Lose control", "All of the above"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 5: Shifting",
+            question: "What actions negatively impact fuel economy?",
+            options: ["Sitting in too low of a gear (High RPMs)", "Double clutching", "Downshifting too early", "Heel-toe technique"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 5: Shifting",
+            question: "With an autoshift (automated manual) transmission, if in drive position:",
+            options: ["You use buttons", "It will shift gears as needed based on speed/load", "Only top gears change", "None of the above"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter 5: Shifting",
+            question: "What is the primary difference between manual and semiautomatic?",
+            options: ["Top gears automatically change in a semi auto transmission", "Semiauto does not use clutch/lever", "Top gears auto change in semiauto", "Manual uses electronics"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter 5: Shifting",
+            question: "What does a fully automatic transmission use to change gears?",
+            options: ["Torque converter", "Range control lever", "Lever or button", "Both A and C"],
+            answer: 3
+        },
+
+        // CHAPTER 6
+        {
+            chapter: "Chapter 6: Backing",
+            question: "How does your trailer respond when you turn the wheel to the right while backing?",
+            options: ["It drifts to the right", "It pushes", "It drifts to the left", "Never turn wheel while backing"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 6: Backing",
+            question: "What is a key reason backing is so dangerous?",
+            options: ["Neck pain", "Limited visibility (Blind spots)", "Getting out of tractor", "Both B and C"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter 6: Backing",
+            question: "What is the acronym used for the safety check before backing?",
+            options: ["GOAL: Get Out And Look", "FIRE", "LAYER", "SAFE"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter 6: Backing",
+            question: "If you can use a spotter when backing:",
+            options: ["Responsibility transfers to spotter", "He/she should be behind vehicle", "Use cell phone", "You must agree on all hand signals before beginning"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 6: Backing",
+            question: "Which backing technique is fundamental in learning all others?",
+            options: ["Sight-side jackknife", "Straight line backing", "Alley dock", "Parallel parking"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter 6: Backing",
+            question: "What is key to alley dock backing?",
+            options: ["Backing while turning into a space 90 degrees to truck", "Backing alongside dock", "Straight down alley", "None"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter 6: Backing",
+            question: "Regarding blind-side jackknife backing:",
+            options: ["Never do without spotter", "Stop every few feet to check", "Greater than 90 degree angle", "Both A and B"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 6: Backing",
+            question: "What maneuver should you use if the trailer did not wind up directly in front of target?",
+            options: ["Offset backing", "Sight side jackknife", "Blind side", "Alley dock"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter 6: Backing",
+            question: "What is unique to loading dock areas you must watch for?",
+            options: ["Storage containers", "Pedestrian paths", "Unusual clearances and barriers", "None"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 6: Backing",
+            question: "When backing in a parking lot, take note of:",
+            options: ["Sun location", "Position of entrances and exits", "Fuel", "Tachometer"],
+            answer: 1
+        },
+
+        // CHAPTER 7
+        {
+            chapter: "Chapter 7: Coupling",
+            question: "If your fifth wheel isn't greased properly, it can:",
+            options: ["Crack the apron", "Create steering problems", "Snap kingpin", "Both A and B"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter 7: Coupling",
+            question: "If your service line is loose or damaged, you'll:",
+            options: ["Suffer serious leak when you apply brakes", "Increase stopping distance", "Drain tanks", "All of the above"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 7: Coupling",
+            question: "Backing under your trailer at an angle can:",
+            options: ["Push trailer sideways", "Pinch lines", "Damage/break landing gear", "Both A and C"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 7: Coupling",
+            question: "When performing the tug test, when should you stop?",
+            options: ["As soon as you feel resistance", "Hear squeak", "Brakes pop out", "Spotter signals"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter 7: Coupling",
+            question: "Safest way to lower/raise landing gear in high gear?",
+            options: ["Spin around wrist", "Face parallel using two hands", "Face trailer, feet apart, rest one hand on trailer", "Face parallel, one hand"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 7: Coupling",
+            question: "How can you pull the fifth wheel release handle in a way that doesn't put yourself at risk of injury?",
+            options: ["Bend at the knees, keep your legs and feet clear of the rear tractor wheels, square yourself up with the handle, and pull straight out.", "Tuck legs between wheels", "Brace foot against tire"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter 7: Coupling",
+            question: "When positioning converter dolly, roll up and stop when:",
+            options: ["Fifth wheel under apron", "Kingpin 1 foot away", "Pintle hook snaps", "Fifth wheel makes contact with front of apron plate"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 7: Coupling",
+            question: "Trailer height relative to fifth wheel should be:",
+            options: ["Same height", "Slightly lower than", "Slightly higher", "Perpendicular"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter 7: Coupling",
+            question: "How to ease pressure on fifth wheel jaws before uncoupling?",
+            options: ["Park on decline", "Chock brakes", "Lock trailer brakes and back up gently", "All of the above"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 7: Coupling",
+            question: "When uncoupling the converter dolly, why should you never unlock the pintle hook with the dolly under the rear trailer?",
+            options: ["You can unlock it", "Dolly tow bar could fly up causing injury", "Trailer drop", "Trailer roll"],
+            answer: 1
+        },
+
+        // CHAPTER 8
+        {
+            chapter: "Chapter 8: Visual Search",
+            question: "Distance scanning helps you:",
+            options: ["Avoid abrupt stops", "Identify hazards early", "Avoid radical speed changes", "All of the above"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 8: Visual Search",
+            question: "As a general rule, look about ______ ahead of your vehicle.",
+            options: ["1-2 seconds", "6-7 seconds", "12-15 seconds", "20 seconds"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 8: Visual Search",
+            question: "How often should you check your mirrors while driving?",
+            options: ["Every 2 seconds", "Every 4 seconds", "Every 10 seconds", "Every 20 seconds"],
+            answer: 1 
+        },
+        {
+            chapter: "Chapter 8: Visual Search",
+            question: "Which potential hazards must you be aware of?",
+            options: ["Stopped vehicles", "Pedestrians", "Accidents", "All of the above"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 8: Visual Search",
+            question: "Which of the following scenarios could indicate a distracted pedestrian?:",
+            options: ["Looking straight ahead", "Looking down at cell phone reading a text", "Looking both ways", "All of the above"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter 8: Visual Search",
+            question: "What is a potential sign of a distracted driver",
+            options: ["Consistent speed", "Stays in lane", "The SUV behind you cut off another driver and is now swerving and tailgating", "All of the above"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 8: Visual Search",
+            question: "Which mirror eliminates blind spots?",
+            options: ["Convex mirrors", "Plane (west coast)", "Fender", "Rear view"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter 8: Visual Search",
+            question: "Which type of mirror is designed to eliminate as much of your blind spot as possible?",
+            options: ["Convex", "Plane (west coast)", "Fender", "Any"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter 8: Visual Search",
+            question: "When adjusting plane (west coast) mirrors, you should see:",
+            options: ["the Trailer body", "Part of the trailer (the side)", "Ground 30 feet away", "Ground 35 feet away"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter 8: Visual Search",
+            question: "When changing lanes, check mirrors:",
+            options: ["Before changing", "After signal and as you begin", "After complete", "All of the above"],
+            answer: 3
+        },
+
+        // CHAPTER 9
+        {
+            chapter: "Chapter 9: Communication",
+            question: "Using your turn signals is only optional when:",
+            options: ["Changing lanes alone", "Merging slow", "Returning to lane", "None of the above"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 9: Communication",
+            question: "On the highway, signal about ______ feet before turning.",
+            options: ["100", "250", "500", "1,000"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 9: Communication",
+            question: "If traffic ahead slows, how do you alert those behind you?",
+            options: ["Tap brake lights", "Flash headlights", "Sound horn", "Drive on shoulder"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter 9: Communication",
+            question: "What happens if you try to direct traffic?",
+            options: ["Safer environment", "Cause accident/liability", "Found at fault", "Both B and C"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 9: Communication",
+            question: "When approaching pedestrian/cyclist, assume:",
+            options: ["You have right of way", "they don't see you and could suddenly move in front of your vehicle", "More are present", "All of the above"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter: 9: Communication",
+            question: "From dusk to dawn, ensure ______ are on.",
+            options: ["Flashers", "Brake lights", "Turn signals", "Headlights"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 9: Communication",
+            question: "Which horn to use for communicating (politely)?",
+            options: ["Electric horn", "Air horn", "Bulb horn", "Either A or C"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter 9: Communication",
+            question: "When is an appropriate time for you to use your four-way flashers?",
+            options: ["Slowing down unexpectedly", "Stopped on roadway/shoulder", "Exiting highway", "Both A and B"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 9: Communication",
+            question: "If stopped, you have ______ minutes to set out emergency warning devices.",
+            options: ["5", "10", "15", "30"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter 9: Communication",
+            question: "How can making eye contact help you communicate with others around you?",
+            options: ["Maintain control", "Enforce right of way", "It can assist in confirming others' awareness of your presence", "Distracting"],
+            answer: 2
+        },
+
+        // CHAPTER 10
+        {
+            chapter: "Chapter 10: Distracted Driving",
+            question: "Visual Distractions are:",
+            options: ["What you should focus on", "Occur immediately in front", "Only for non-pros", "Those that lure eyes away from road"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter 10: Distracted Driving",
+            question: "An example of a ______ distraction is eating a cheeseburger.",
+            options: ["Visual", "Physical", "Mental", "All of the above"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter 10: Distracted Driving",
+            question: "Failing to comprehend seeing something because mind wandered is:",
+            options: ["Highway hypnosis", "Physical distraction", "Inattention blindness", "Both A and B"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter: 10: Distracted Driving",
+            question: "Texting while driving:",
+            options: ["Almost as dangerous as phone", "The effects of texting while driving are the same as being intoxicated.", "Allowed for CMVs", "Allowed if one word"],
+            answer: 1
+        },
+        {
+            chapter: "Chapter 10: Distracted Driving",
+            question: "According to the FMCSA, which of the following actions may be permissible when driving a CMV?",
+            options: ["Holding phone", "Reaching for phone", "Answering a hands-free cell-phone by touching a single button", "Dialing"],
+            answer: 2
+        },
+        {
+            chapter: "Chapter 10: Distracted Driving",
+            question: "Keeping both hands on the wheel in the____position will enable you to react quickly to potential hazards, including distracted drivers.",
+            options: ["8 and 4", "9 and 3", "10 and 2", "Either A or B"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter: 10: Distracted Driving",
+            question: "If you can't ignore a distraction, what should you do?",
+            options: ["Take care of it at your next planned stop", "Pull over", "Take 5 seconds", "Both A and B"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter: 10: Distracted Driving",
+            question: "Which of the following are signs another driver is distracted?:",
+            options: ["Speed variance", "Dramatic changes", "Tailgating", "All of the above"],
+            answer: 3
+        },
+        {
+            chapter: "Chapter: 10: Distracted Driving",
+            question: "Best way to deal with distracted driver:",
+            options: ["Safety cushion", "Ignore", "Pull in front", "All of the above"],
+            answer: 0
+        },
+        {
+            chapter: "Chapter: 10: Distracted Driving",
+            question: "Help reduce distracted driving by committing, watching, and:",
+            options: ["Responding by managing distracted drivers once you spot them.", "Reporting to FMCSA", "Relaxing", "Recording"],
+            answer: 0
+        }
+    ];
+
+    // --- State & Variables ---
+    const STORAGE_KEY = 'cdl_quiz_state_v1';
+    
+    let state = {
+        mode: 'full', // 'full' or 'review'
+        currentIndex: 0,
+        questionIndices: [], 
+        answers: {} 
+    };
+
+    // --- Initialization ---
+    window.onload = function() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        document.getElementById('quiz-view').style.display = 'none';
+        document.getElementById('results-view').style.display = 'none';
+        document.getElementById('menu-view').style.display = 'block';
+
+        const resumeBtn = document.getElementById('btn-resume');
+        const clearBtn = document.getElementById('btn-clear');
+
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                // Show resume only if there is valid progress to resume
+                const hasPending = parsed && Array.isArray(parsed.questionIndices) && parsed.currentIndex < parsed.questionIndices.length;
+                if (hasPending) {
+                    resumeBtn.style.display = 'block';
+                } else {
+                    resumeBtn.style.display = 'none';
+                }
+                clearBtn.style.display = 'inline-block';
+            } catch (e) {
+                // Corrupt saved data; clear it
+                localStorage.removeItem(STORAGE_KEY);
+                resumeBtn.style.display = 'none';
+                clearBtn.style.display = 'none';
+            }
+        } else {
+            resumeBtn.style.display = 'none';
+            clearBtn.style.display = 'none';
+        }
+
+        // Hide "Next" initially
+        document.getElementById('btn-next').style.display = 'none';
+    };
+
+    function initQuizState(mode, customIndices = []) {
+        state.mode = mode;
+        state.currentIndex = 0;
+        state.answers = {};
+        
+        if (mode === 'full') {
+            state.questionIndices = questions.map((_, i) => i);
+        } else if (mode === 'review') {
+            state.questionIndices = customIndices.slice(); // copy
+        }
+        
+        saveState();
+        showQuizView();
+        loadQuestion();
+    }
+
+    function startNewQuiz(mode) {
+        // Use a custom modal in future; for now keep confirm for simplicity
+        if (confirm("Start a new quiz? Previous progress will be cleared.")) {
+            localStorage.removeItem(STORAGE_KEY);
+            initQuizState(mode);
+        }
+    }
+
+    function resumeQuiz() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                // Basic validation
+                if (parsed && Array.isArray(parsed.questionIndices) && parsed.questionIndices.length > 0) {
+                    state = parsed;
+                    showQuizView();
+                    loadQuestion();
+                } else {
+                    alert("No resumable progress found.");
+                }
+            } catch (e) {
+                alert("Could not parse saved progress. It will be cleared.");
+                localStorage.removeItem(STORAGE_KEY);
+                document.getElementById('btn-resume').style.display = 'none';
+            }
+        }
+    }
+
+    function startReviewQuiz() {
+        const wrongIndices = getWrongIndices();
+        if (wrongIndices.length === 0) {
+            alert("No wrong answers to review!");
+            return;
+        }
+        initQuizState('review', wrongIndices);
+    }
+
+    function clearSavedProgress() {
+        if (!confirm("Clear saved quiz progress from this browser? This cannot be undone.")) return;
+        localStorage.removeItem(STORAGE_KEY);
+        document.getElementById('btn-resume').style.display = 'none';
+        document.getElementById('btn-clear').style.display = 'none';
+        alert("Saved progress cleared.");
+    }
+
+    // --- Core Logic ---
+
+    function showQuizView() {
+        document.getElementById('menu-view').style.display = 'none';
+        document.getElementById('results-view').style.display = 'none';
+        document.getElementById('quiz-view').style.display = 'block';
+    }
+
+    function saveState() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (e) {
+            console.warn("Failed to save state to localStorage:", e);
+        }
+    }
+
+    function getRealIndex() {
+        return state.questionIndices[state.currentIndex];
+    }
+
+    function updateLiveScore() {
+        // Calculate score based on answered questions so far
+        let correctCount = 0;
+        let answeredCount = 0;
+
+        state.questionIndices.forEach(realIdx => {
+            if (state.answers[realIdx] !== undefined) {
+                answeredCount++;
+                if (state.answers[realIdx] === questions[realIdx].answer) {
+                    correctCount++;
+                }
+            }
+        });
+
+        const scoreEl = document.getElementById('live-score');
+        const warnEl = document.getElementById('score-warning');
+        
+        if (answeredCount === 0) {
+            scoreEl.innerText = "Score: —";
+            scoreEl.classList.remove('danger');
+            warnEl.style.display = 'none';
+            return;
+        }
+
+        const pct = Math.round((correctCount / answeredCount) * 100);
+        scoreEl.innerText = `Score: ${pct}%`;
+
+        if (pct < 80) {
+            scoreEl.classList.add('danger');
+            warnEl.style.display = 'block';
+        } else {
+            scoreEl.classList.remove('danger');
+            warnEl.style.display = 'none';
+        }
+    }
+
+    function loadQuestion() {
+        const realIdx = getRealIndex();
+        const q = questions[realIdx];
+        
+        // Progress UI -- show position as (current / total)
+        const qCounter = document.getElementById('q-counter');
+        qCounter.innerText = `Question ${state.currentIndex + 1} of ${state.questionIndices.length}`;
+
+        // Progress bar: use (currentIndex+1)/total so it fills to 100% on last question
+        const pct = Math.round(((state.currentIndex + 1) / state.questionIndices.length) * 100);
+        const bar = document.getElementById('bar');
+        bar.style.width = `${pct}%`;
+        bar.setAttribute('aria-valuenow', pct);
+
+        // Update Score UI
+        updateLiveScore();
+
+        // Content
+        document.getElementById('chapter-tag').innerText = q.chapter;
+        document.getElementById('question-text').innerText = q.question;
+        
+        const optContainer = document.getElementById('options-container');
+        optContainer.innerHTML = '';
+
+        // Check if already answered
+        const existingAnswer = state.answers[realIdx];
+        const isAnswered = existingAnswer !== undefined;
+
+        q.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-opt';
+            btn.type = 'button';
+            btn.innerText = opt;
+            btn.setAttribute('data-opt-index', index);
+            btn.setAttribute('aria-pressed', isAnswered ? (index === existingAnswer).toString() : 'false');
+
+            if (isAnswered) {
+                btn.disabled = true;
+                if (index === q.answer) {
+                    btn.classList.add('correct');
+                } else if (index === existingAnswer) {
+                    btn.classList.add('incorrect');
+                }
+            } else {
+                // support click or keyboard (button automatically supports keyboard)
+                btn.onclick = () => checkAnswer(index, btn, q.answer);
+            }
+            optContainer.appendChild(btn);
+        });
+
+        // Navigation Buttons Logic
+        const btnNext = document.getElementById('btn-next');
+        const btnPrev = document.getElementById('btn-prev');
+
+        if (state.currentIndex > 0) {
+            btnPrev.style.display = 'inline-block';
+            btnPrev.disabled = false;
+        } else {
+            btnPrev.style.display = 'none';
+        }
+
+        if (isAnswered) {
+            btnNext.style.display = 'inline-block';
+            if (state.currentIndex === state.questionIndices.length - 1) {
+                btnNext.innerText = "Finish Quiz";
+            } else {
+                btnNext.innerText = "Next Question";
+            }
+        } else {
+            btnNext.style.display = 'none';
+        }
+
+        // Ensure focus for keyboard users: focus first option
+        const firstOpt = optContainer.querySelector('.btn-opt');
+        if (firstOpt) firstOpt.focus();
+    }
+
+    function checkAnswer(selected, btn, correct) {
+        const realIdx = getRealIndex();
+        
+        // Save Answer
+        state.answers[realIdx] = selected;
+        saveState();
+
+        // UI Feedback
+        const buttons = document.querySelectorAll('.btn-opt');
+        buttons.forEach((b, idx) => {
+            b.disabled = true;
+            if (idx === correct) b.classList.add('correct');
+            // mark incorrect only for the user-selected button (if wrong)
+            if (idx !== correct && idx === selected) b.classList.add('incorrect');
+        });
+
+        // Update Score immediately after answering
+        updateLiveScore();
+
+        // Show Next Button
+        const btnNext = document.getElementById('btn-next');
+        btnNext.style.display = 'inline-block';
+        if (state.currentIndex === state.questionIndices.length - 1) {
+            btnNext.innerText = "Finish Quiz";
+        } else {
+            btnNext.innerText = "Next Question";
+        }
+    }
+
+    function nextQuestion() {
+        if (state.currentIndex < state.questionIndices.length - 1) {
+            state.currentIndex++;
+            saveState();
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function prevQuestion() {
+        if (state.currentIndex > 0) {
+            state.currentIndex--;
+            saveState();
+            loadQuestion();
+        }
+    }
+
+    function getWrongIndices() {
+        const wrongs = [];
+        state.questionIndices.forEach(realIdx => {
+            const userAns = state.answers[realIdx];
+            if (userAns !== undefined && userAns !== questions[realIdx].answer) {
+                wrongs.push(realIdx);
+            }
+        });
+        return wrongs;
+    }
+
+    function showResults() {
+        document.getElementById('quiz-view').style.display = 'none';
+        document.getElementById('results-view').style.display = 'block';
+        
+        let correctCount = 0;
+        state.questionIndices.forEach(realIdx => {
+            if (state.answers[realIdx] === questions[realIdx].answer) {
+                correctCount++;
+            }
+        });
+
+        const total = state.questionIndices.length;
+        const finalPct = Math.round((correctCount / total) * 100);
+        document.getElementById('final-score').innerText = `${finalPct}%`;
+        
+        const wrongIndices = getWrongIndices();
+        const reviewBtn = document.getElementById('btn-review-wrong');
+        const msg = document.getElementById('result-msg');
+
+        if (wrongIndices.length > 0) {
+            reviewBtn.style.display = 'inline-block';
+            msg.innerText = `You got ${wrongIndices.length} questions wrong. You can review them now.`;
+        } else {
+            reviewBtn.style.display = 'none';
+            msg.innerText = "Perfect score! Great job.";
+        }
+    }
+
+</script>
+
+</body>
+</html>
